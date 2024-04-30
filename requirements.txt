@@ -1,0 +1,7 @@
+torchtext
+tqdm
+matplotlib
+seaborn
+requests
+numpy
+dill

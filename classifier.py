@@ -1,5 +1,5 @@
 import dill as pkl
-from model import ProcessedData, PreprocessingInfo
+from shared_data import ProcessedData, PreprocessingInfo
 import numpy as np
 
 from sklearn.svm import SVC
