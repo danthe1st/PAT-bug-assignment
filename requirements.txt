@@ -5,3 +5,4 @@ seaborn
 requests
 numpy
 dill
+scikit-learn
