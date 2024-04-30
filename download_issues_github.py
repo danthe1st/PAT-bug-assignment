@@ -1,3 +1,4 @@
+from typing import Optional
 import requests
 from tqdm import tqdm
 import dill as pkl
@@ -8,7 +9,7 @@ import numpy as np
 REPO_PATHS = ["eclipse/che"]
 
 
-def process_issue(issue: dict) -> tuple[str, str, list[str]]:
+def process_issue(issue: dict) -> Optional[tuple[str, str, list[str]]]:
     #if issue["author_association"] == "CONTRIBUTOR":
     #    return
     id = issue["id"]
@@ -20,9 +21,9 @@ def process_issue(issue: dict) -> tuple[str, str, list[str]]:
     #if issue["user"]["login"] in assignees:
     #    return
     if "pull_request" in issue:
-        return
+        return None
     if not assignees:
-        return
+        return None
     return id, body, assignees
 
 def add_issues(issues: list[tuple[str, str, list[str]]], token, repo_path):

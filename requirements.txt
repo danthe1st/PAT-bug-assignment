@@ -6,3 +6,7 @@ requests
 numpy
 dill
 scikit-learn
+
+mypy
+types-requests
+types-tqdm

@@ -32,7 +32,7 @@ def get_assignee_mapping_and_names(assignees_list: list[list[str]], min_count: i
             current_index = current_index + 1
     return assignee_mapping, assignee_names
 
-def one_hot_encoded_assignees(assignees: list[str], assignee_mapping: dict[str, int]) -> tuple[np.array, bool]:
+def one_hot_encoded_assignees(assignees: list[str], assignee_mapping: dict[str, int]) -> tuple[npt.NDArray, bool]:
     assignee_vec = np.zeros(len(assignee_mapping))
     has_entries = False
     for assignee in assignees:
@@ -85,13 +85,6 @@ def main():
     data = ProcessedData(preprocessing_info, test_ids, test_bodies, test_assignees)
     with open("test.pkl", "wb") as fh:
         pkl.dump(data, fh)
-    
-class ProcessedData:
-    def __init__(self, preprocessing_info: PreprocessingInfo, ids: npt.NDArray, bodies: npt.NDArray, assignees: npt.NDArray):
-        self.ids=ids
-        self.preprocessing_info=preprocessing_info
-        self.bodies=bodies
-        self.assignees=assignees
 
 if __name__ == "__main__":
     main()

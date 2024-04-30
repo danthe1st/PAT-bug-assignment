@@ -18,7 +18,7 @@ def process_issue(issue: dict) -> Optional[tuple[str, str, list[str]]]:
     body = issue["summary"]
     assignee = issue["assigned_to"]
     if assignee.endswith("eclipse.org"):
-        return
+        return None
     return id, body, assignee
 
 def add_issues(issues: list[tuple[str, str, list[str]]], token, repo_path):
