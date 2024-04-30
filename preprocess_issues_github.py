@@ -3,7 +3,7 @@ import numpy.typing as npt
 import dill as pkl
 
 from text_preprocessing import generate_info_and_preprocess, clean_body_array, process_cleaned
-from model import PreprocessingInfo, ProcessedData
+from shared_data import PreprocessingInfo, ProcessedData
 
 from sklearn.model_selection import train_test_split
 
