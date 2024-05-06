@@ -71,7 +71,7 @@ def generate_info_and_preprocess(body: npt.NDArray) -> tuple[PreprocessingInfo, 
     
 
     raw_dict = find_occurrences(body)
-    word_list = clean_dict(raw_dict, 10, 500)
+    word_list = clean_dict(raw_dict, 5, 500)
 
     #print(raw_dict)
     #amounts = np.array(list(raw_dict.values()))

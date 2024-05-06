@@ -56,6 +56,7 @@ def main():
     bodies = issues_raw[:,1]
     assignee_names = issues_raw[:,2]
     unique_assignees = np.unique(assignee_names)
+    print(f"loaded {len(ids)} issues with {len(unique_assignees)} unique assgnees")
 
     assignee_indices = {}
     for i, ass in enumerate(unique_assignees):
