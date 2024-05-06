@@ -2,6 +2,8 @@ import numpy as np
 import numpy.typing as npt
 import dill as pkl
 
+import sys
+
 from text_preprocessing import generate_info_and_preprocess, clean_body_array, process_cleaned
 from shared_data import PreprocessingInfo, ProcessedData
 
@@ -42,26 +44,42 @@ def one_hot_encoded_assignees(assignees: list[str], assignee_mapping: dict[str, 
     return assignee_vec, has_entries
 
 def main():
-    with open("issues_raw.pkl", "rb") as fh:
+
+    if len(sys.argv)>1:
+        input_file = sys.argv[1]
+    else:
+        input_file = "issues_bugzilla_raw.pkl"
+
+    with open(input_file, "rb") as fh:
         issues_raw = pkl.load(fh)
     ids = issues_raw[:,0]
     bodies = issues_raw[:,1]
-    assignee_lists = issues_raw[:,2]
-    assignee_mapping, assignee_names = get_assignee_mapping_and_names(assignee_lists)
+    assignee_names = issues_raw[:,2]
+    unique_assignees = np.unique(assignee_names)
+
+    assignee_indices = {}
+    for i, ass in enumerate(unique_assignees):
+        assignee_indices[ass]=i
 
     keep_entries = []
     assignee_vecs = np.zeros((ids.shape[0], len(assignee_names)))
 
-    for i, assignees in enumerate(assignee_lists):
-        assignee_vec, has_entries = one_hot_encoded_assignees(assignees, assignee_mapping)
-        if has_entries:
-            keep_entries.append(i)
-        assignee_vecs[i] = assignee_vec
+    #assignees = np.zeros((len(ids), len(unique_assignees)), dtype=int)
+    assignees = np.zeros((len(ids)), dtype=int)
+
+    for i, assignee in enumerate(assignee_names):
+        #assignees[i,assignee_indices[assignee]]=1
+        assignees[i]=assignee_indices[assignee]
+        keep_entries.append(i)
+        #assignee_vec, has_entries = one_hot_encoded_assignees(assignees, [assignee_mapping])
+        #if has_entries:
+        #    keep_entries.append(i)
+        #assignee_vecs[i] = assignee_vec
     
-    ids = np.array(ids[keep_entries], dtype=int)
-    bodies = bodies[keep_entries]
+    #ids = np.array(ids[keep_entries], dtype=int)
+    #bodies = bodies[keep_entries]
     bodies = clean_body_array(bodies)
-    assignees = np.array(assignee_vecs[keep_entries], dtype=int)
+    #assignees = np.array(assignee_vecs[keep_entries], dtype=int)
 
 
     train_ids, test_ids, train_bodies, test_bodies, train_assignees, test_assignees = train_test_split(ids, bodies, assignees, test_size=0.25, random_state=1337)

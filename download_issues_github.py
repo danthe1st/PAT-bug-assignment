@@ -4,29 +4,30 @@ from tqdm import tqdm
 import dill as pkl
 
 import numpy as np
+import numpy.typing as npt
 
-#REPO_PATHS = ("eclipse-jdt/eclipse.jdt.core", "eclipse-jdt/eclipse.jdt.ui")
-REPO_PATHS = ["eclipse/che"]
+REPO_PATHS = ("eclipse-jdt/eclipse.jdt.core", "eclipse-jdt/eclipse.jdt.ui")
+#REPO_PATHS = ["eclipse/che"]
 
 
-def process_issue(issue: dict) -> Optional[tuple[str, str, list[str]]]:
+def process_issue(issue: dict) -> Optional[tuple[str, str, str]]:
     #if issue["author_association"] == "CONTRIBUTOR":
     #    return
     id = issue["id"]
     body = f"{issue['title']} {issue['body']}"
-    assignees = []
+    #assignees = []
     single_assignee = issue["assignee"]
-    for assignee in issue["assignees"]:
-        assignees.append(assignee["login"])
+    #for assignee in issue["assignees"]:
+    #    assignees.append(assignee["login"])
     #if issue["user"]["login"] in assignees:
     #    return
     if "pull_request" in issue:
         return None
-    if not assignees:
+    if not single_assignee:
         return None
-    return id, body, assignees
+    return id, body, single_assignee["login"]
 
-def add_issues(issues: list[tuple[str, str, list[str]]], token, repo_path):
+def add_issues(issues: list[tuple[str, str, str]], token, repo_path):
     for i in tqdm(range(1, 100)):
         res = requests.request("GET", f"https://api.github.com/repos/{repo_path}/issues?state=closed&per_page=100&page={i}", headers={"Authorization": f"Bearer {token}"})
         if res.status_code != 200:
@@ -40,9 +41,9 @@ def add_issues(issues: list[tuple[str, str, list[str]]], token, repo_path):
             if result:
                 issues.append(result)
 
-def load():
+def load() -> npt.NDArray:
     i = 1
-    issues = []
+    issues: list[tuple[str, str, str]] = []
     
     with open(".token","r") as fh:
         token = fh.readline()
