@@ -57,7 +57,7 @@ def load() -> npt.NDArray:
 def main():
     issues = load()
     print(len(issues))
-    with open("issues_raw.pkl", "wb") as fh:
+    with open("issues_github_raw.pkl", "wb") as fh:
         pkl.dump(issues, fh)
 
 if __name__ == "__main__":
