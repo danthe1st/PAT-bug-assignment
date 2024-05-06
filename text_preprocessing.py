@@ -6,18 +6,15 @@ import re
 from tqdm import trange
 from shared_data import PreprocessingInfo
 
-import torchtext
-from torchtext.data import get_tokenizer
 
 # adapted from code I wrote for the NLP course
 
-def clean(tokenizer, text: str) -> str:
+def clean(text: str) -> list[str]:
     if len(text) > 1000:
         text = text[:1000]
-    #text = re.sub('[?!]', '.', text)#would normalize end of sentence but this carries too much meaning
     text = re.sub("\\d+([.,/-]\\d+)*"," 0 ",text) # reduce all numbers
-    text = re.sub('[^a-zA-Z.,?!0 ]+', ' ', text) # replacing all non-letter characters except sentence deliminators with spaces
-    return tokenizer(text)
+    text = re.sub('[^a-zA-Z,0 ]+', ' ', text) # replacing all non-letter characters except sentence deliminators with spaces
+    return text.split(' ')
 
 def find_occurrences(cleaned_body: npt.NDArray) -> dict[str, int]:
 
@@ -50,11 +47,10 @@ def create_word_to_id_mapping(dictionary: list[str]) -> Callable[[str], int]:
       return 0 # out of vocabulary
   return map
 
-def clean_body_array(body_array: npt.NDArray):
-    tokenizer = get_tokenizer("basic_english")
+def clean_body_array(body_array: npt.NDArray) -> npt.NDArray:
     body = body_array.copy()
     for i in trange(len(body)):
-        body[i] = clean(tokenizer, str(body[i]))
+        body[i] = clean(str(body[i]))
     return body
 
 def process_cleaned(info: PreprocessingInfo, body: npt.NDArray) -> npt.NDArray:

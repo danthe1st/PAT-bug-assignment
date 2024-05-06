@@ -13,6 +13,7 @@ import seaborn as sn
 from matplotlib import pyplot as plt
 from sklearn.dummy import DummyClassifier
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
 
 if __name__ == "__main__":
     with open("train.pkl", "rb") as fh:
@@ -32,6 +33,7 @@ if __name__ == "__main__":
     #clf = SVC()
     #clf = DummyClassifier()
     clf = MultinomialNB()
+    #clf = KNeighborsClassifier()
     #clf = RandomForestClassifier()
 
     clf.fit(training_data.bodies, training_data.assignees)
