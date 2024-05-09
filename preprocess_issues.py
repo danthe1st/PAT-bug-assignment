@@ -20,28 +20,8 @@ def find_assignee_counts(assignees_list: list[list[str]]) -> dict[str, int]:
             cnt = cnt+1
             assignee_counts[assignee] = cnt
     return assignee_counts
-    
-def get_assignee_mapping_and_names(assignees_list: list[list[str]], min_count: int = 10) -> tuple[dict[str, int], list[str]]:
-    assignee_counts = find_assignee_counts(assignees_list)
-    current_index = 0
-    assignee_mapping = dict()
-    assignee_names = []
-    for assignee in assignee_counts:
-        count = assignee_counts[assignee]
-        if count >= min_count:
-            assignee_mapping[assignee]= current_index
-            assignee_names.append(assignee)
-            current_index = current_index + 1
-    return assignee_mapping, assignee_names
 
-def one_hot_encoded_assignees(assignees: list[str], assignee_mapping: dict[str, int]) -> tuple[npt.NDArray, bool]:
-    assignee_vec = np.zeros(len(assignee_mapping))
-    has_entries = False
-    for assignee in assignees:
-        if assignee in assignee_mapping:
-            assignee_vec[assignee_mapping[assignee]] = 1
-            has_entries = True
-    return assignee_vec, has_entries
+TOP_K_ASSIGNEES = 0
 
 def main():
 
@@ -55,32 +35,38 @@ def main():
     ids = issues_raw[:,0]
     bodies = issues_raw[:,1]
     assignee_names = issues_raw[:,2]
-    unique_assignees = np.unique(assignee_names)
+    unique_assignees, assignee_counts = np.unique(assignee_names, return_counts=True)
     print(f"loaded {len(ids)} issues with {len(unique_assignees)} unique assgnees")
+
+    if TOP_K_ASSIGNEES > 0:
+        min_assignee_count = np.min(assignee_counts[np.argpartition(assignee_counts, -TOP_K_ASSIGNEES)[-TOP_K_ASSIGNEES:]])
+    else:
+        min_assignee_count = 1
 
     assignee_indices = {}
     for i, ass in enumerate(unique_assignees):
-        assignee_indices[ass]=i
+        if assignee_counts[i] >= min_assignee_count:
+            assignee_indices[ass]=i
 
     keep_entries = []
     assignee_vecs = np.zeros((ids.shape[0], len(assignee_names)))
 
-    #assignees = np.zeros((len(ids), len(unique_assignees)), dtype=int)
     assignees = np.zeros((len(ids)), dtype=int)
 
-    for i, assignee in enumerate(assignee_names):
-        #assignees[i,assignee_indices[assignee]]=1
-        assignees[i]=assignee_indices[assignee]
-        keep_entries.append(i)
-        #assignee_vec, has_entries = one_hot_encoded_assignees(assignees, [assignee_mapping])
-        #if has_entries:
-        #    keep_entries.append(i)
-        #assignee_vecs[i] = assignee_vec
     
-    #ids = np.array(ids[keep_entries], dtype=int)
-    #bodies = bodies[keep_entries]
+
+    for i, assignee in enumerate(assignee_names):
+        if assignee in assignee_indices:
+            assignees[i]=assignee_indices[assignee]
+            keep_entries.append(i)
+
+    ids = np.array(ids[keep_entries], dtype=int)
+    bodies = bodies[keep_entries]
+    assignees = assignees[keep_entries]
+
+    print(f"{len(ids)} issues in dataset")
+
     bodies = clean_body_array(bodies)
-    #assignees = np.array(assignee_vecs[keep_entries], dtype=int)
 
 
     train_ids, test_ids, train_bodies, test_bodies, train_assignees, test_assignees = train_test_split(ids, bodies, assignees, test_size=0.25, random_state=1337)

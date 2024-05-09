@@ -14,5 +14,7 @@ Note that doing so sends a significant amount of API requests (one for every iss
 Issues are preprocessed in a script `preprocess_issues.py`.
 It is possibly to supply a command-line-argument containing the name of the file containing issues downloaded by one of the aforementioned retrieval scripts.
 
+The variable `TOP_K_ASSIGNEES` can be set in order to only consider the assignees with the most issues assigned to them.
+
 ## Classification
 It is possible to train and evaluate the classifier by running `classifier.py`.
