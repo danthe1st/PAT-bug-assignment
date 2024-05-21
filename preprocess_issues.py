@@ -24,7 +24,6 @@ def find_assignee_counts(assignees_list: list[list[str]]) -> dict[str, int]:
 TOP_K_ASSIGNEES = 0
 
 def main():
-
     if len(sys.argv)>1:
         input_file = sys.argv[1]
     else:
