@@ -15,6 +15,8 @@ from sklearn.neighbors import KNeighborsClassifier
 
 import seaborn as sn
 
+import random
+
 if __name__ == "__main__":
     with open("train.pkl", "rb") as fh:
         training_data: ProcessedData = pkl.load(fh)
@@ -56,3 +58,10 @@ if __name__ == "__main__":
     plt.xlabel("predicted")
     plt.ylabel("actual")
     plt.show()
+
+    random_bugreport_id = random.randint(0, len(test_data.ids))
+    random_bugreport_prediction = clf.predict(test_data.bodies[random_bugreport_id][np.newaxis,:]).item()
+    random_bugreport_correct = test_data.assignees[random_bugreport_id]
+    print(f"prediction of bugreport {test_data.ids[random_bugreport_id]}:")
+    print(f"predicted: {test_data.assignee_indices_to_names[random_bugreport_prediction]}")
+    print(f"actual: {test_data.assignee_indices_to_names[random_bugreport_correct]}")

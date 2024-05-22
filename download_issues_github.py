@@ -13,7 +13,7 @@ REPO_PATHS = ("eclipse-jdt/eclipse.jdt.core", "eclipse-jdt/eclipse.jdt.ui")
 def process_issue(issue: dict) -> Optional[tuple[str, str, str]]:
     #if issue["author_association"] == "CONTRIBUTOR":
     #    return
-    id = issue["id"]
+    id = issue["html_url"]
     body = f"{issue['title']} {issue['body']}"
     #assignees = []
     single_assignee = issue["assignee"]

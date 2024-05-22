@@ -1,5 +1,6 @@
 .theia
 __pycache__
 *.pkl
+*.bkp
 .token
 .mypy_cache

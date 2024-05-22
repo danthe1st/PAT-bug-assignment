@@ -9,9 +9,9 @@ class PreprocessingInfo:
         self.doc_count = doc_count
 
 class ProcessedData:
-    def __init__(self, preprocessing_info: PreprocessingInfo, ids: npt.NDArray, bodies: npt.NDArray, assignees: npt.NDArray):
+    def __init__(self, preprocessing_info: PreprocessingInfo, ids: npt.NDArray, bodies: npt.NDArray, assignees: npt.NDArray, assignee_indices_to_names: dict[int, str]):
         self.ids=ids
         self.preprocessing_info=preprocessing_info
         self.bodies=bodies
         self.assignees=assignees
-
+        self.assignee_indices_to_names = assignee_indices_to_names

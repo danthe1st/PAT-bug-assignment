@@ -43,9 +43,12 @@ def main():
         min_assignee_count = 1
 
     assignee_indices = {}
+    assignee_indices_to_names = {}
     for i, ass in enumerate(unique_assignees):
         if assignee_counts[i] >= min_assignee_count:
             assignee_indices[ass]=i
+            assignee_indices_to_names[i] = ass
+
 
     keep_entries = []
     assignee_vecs = np.zeros((ids.shape[0], len(assignee_names)))
@@ -56,10 +59,10 @@ def main():
 
     for i, assignee in enumerate(assignee_names):
         if assignee in assignee_indices:
-            assignees[i]=assignee_indices[assignee]
+            assignees[i] = assignee_indices[assignee]
             keep_entries.append(i)
 
-    ids = np.array(ids[keep_entries], dtype=int)
+    ids = np.array(ids[keep_entries])
     bodies = bodies[keep_entries]
     assignees = assignees[keep_entries]
 
@@ -73,10 +76,10 @@ def main():
     preprocessing_info, train_bodies = generate_info_and_preprocess(train_bodies)
     print(f"{len(preprocessing_info.word_list)} words in dictionary")
     test_bodies = process_cleaned(preprocessing_info, test_bodies)
-    data = ProcessedData(preprocessing_info, train_ids, train_bodies, train_assignees)
+    data = ProcessedData(preprocessing_info, train_ids, train_bodies, train_assignees, assignee_indices_to_names)
     with open("train.pkl", "wb") as fh:
         pkl.dump(data, fh)
-    data = ProcessedData(preprocessing_info, test_ids, test_bodies, test_assignees)
+    data = ProcessedData(preprocessing_info, test_ids, test_bodies, test_assignees, assignee_indices_to_names)
     with open("test.pkl", "wb") as fh:
         pkl.dump(data, fh)
 
